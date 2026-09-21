@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Agents — 24/7 AI Employees for Content & Lead Gen</title>
+<meta name="description" content="Autonomous Hermes-powered AI agents that run your content and lead-gen systems around the clock — carousels, Reels, YouTube, ads, and competitor intel.">
+<style>
+  :root{
+    --bg:#050505;
+    --bg-2:#0b0b0b;
+    --ink:#f5f5f3;
+    --ink-dim:#8a8a86;
+    --ink-dimmer:#5a5a57;
+    --line:#232321;
+    --line-soft:#161614;
+    --accent:#ffffff;
+    --radius:14px;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    line-height:1.4;
+  }
+  a{color:inherit;text-decoration:none;}
+  img,svg{display:block;}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 32px;}
+  ::selection{background:#fff;color:#000;}
+
+  /* ---------- animated background ---------- */
+  #bg-canvas{
+    position:fixed;inset:0;width:100%;height:100%;z-index:0;
+    opacity:.55;
+  }
+  .grain{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    opacity:.035;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .vignette{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 0%, transparent 0%, transparent 40%, #050505 92%);
+  }
+
+  /* ---------- layout scaffolding ---------- */
+  header, main, footer{position:relative;z-index:2;}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 32px;
+    backdrop-filter:blur(14px);
+    background:linear-gradient(to bottom, rgba(5,5,5,.85), rgba(5,5,5,0));
+    transition:padding .3s var(--ease), background .3s var(--ease);
+  }
+  nav.scrolled{
+    padding:14px 32px;
+    background:rgba(5,5,5,.72);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand svg{width:20px;height:20px;color:#fff;}
+  .brand span{font-size:15px;font-weight:600;letter-spacing:.01em;}
+  .brand .tag{color:var(--ink-dimmer);font-weight:400;font-size:12px;margin-left:2px;}
+  .nav-links{display:flex;align-items:center;gap:36px;}
+  .nav-links a{font-size:13.5px;color:var(--ink-dim);transition:color .2s var(--ease);}
+  .nav-links a:hover{color:var(--ink);}
+  .nav-cta{
+    font-size:13px;font-weight:600;padding:9px 18px;border-radius:100px;
+    background:#fff;color:#000;
+    transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+  }
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,255,255,.15);}
+  @media (max-width:820px){ .nav-links a:not(.nav-cta){display:none;} }
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+    padding:160px 0 100px;
+    position:relative;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--ink-dim);
+    border:1px solid var(--line);
+    padding:7px 14px;border-radius:100px;
+    width:fit-content;margin-bottom:28px;
+    opacity:0;animation:rise .8s var(--ease) .1s forwards;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse 2.2s ease-in-out infinite;}
+  h1{
+    font-size:clamp(42px, 6.6vw, 92px);
+    font-weight:600;letter-spacing:-0.03em;line-height:1.02;
+    max-width:960px;
+    opacity:0;animation:rise .9s var(--ease) .22s forwards;
+  }
+  h1 em{
+    font-style:normal;color:var(--ink-dimmer);
+  }
+  .hero p.lede{
+    margin-top:26px;font-size:clamp(16px,1.7vw,19px);color:var(--ink-dim);
+    max-width:560px;font-weight:400;
+    opacity:0;animation:rise .9s var(--ease) .34s forwards;
+  }
+  .hero-cta{
+    margin-top:44px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+    opacity:0;animation:rise .9s var(--ease) .46s forwards;
+  }
+  .btn-primary{
+    position:relative;font-size:14.5px;font-weight:600;padding:15px 26px;border-radius:100px;
+    background:#fff;color:#000;display:inline-flex;align-items:center;gap:8px;
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(255,255,255,.18);}
+  .btn-ghost{
+    font-size:14.5px;color:var(--ink-dim);padding:15px 6px;
+    display:inline-flex;align-items:center;gap:8px;
+    border-bottom:1px solid transparent;transition:.25s var(--ease);
+  }
+  .btn-ghost:hover{color:#fff;border-color:var(--line);}
+
+  .hero-stats{
+    margin-top:88px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--line-soft);border:1px solid var(--line-soft);border-radius:var(--radius);overflow:hidden;
+    opacity:0;animation:rise .9s var(--ease) .58s forwards;
+  }
+  .stat{background:var(--bg);padding:22px 20px;}
+  .stat b{display:block;font-size:26px;font-weight:600;letter-spacing:-0.02em;}
+  .stat span{display:block;margin-top:4px;font-size:12.5px;color:var(--ink-dimmer);}
+  @media (max-width:720px){ .hero-stats{grid-template-columns:repeat(2,1fr);} }
+
+  @keyframes rise{ from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.25;} }
+
+  /* ---------- marquee ---------- */
+  .marquee-wrap{
+    border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);
+    padding:22px 0;overflow:hidden;white-space:nowrap;
+  }
+  .marquee{display:inline-flex;animation:scroll 32s linear infinite;}
+  .marquee span{
+    font-size:14px;color:var(--ink-dimmer);padding:0 28px;display:inline-flex;align-items:center;gap:28px;
+    letter-spacing:.01em;
+  }
+  .marquee span svg{width:13px;height:13px;color:var(--ink-dimmer);}
+  @keyframes scroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+  /* ---------- section shared ---------- */
+  section{padding:150px 0;position:relative;border-bottom:1px solid var(--line-soft);}
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-dimmer);margin-bottom:16px;}
+  h2{font-size:clamp(30px,4vw,50px);font-weight:600;letter-spacing:-0.025em;max-width:680px;line-height:1.08;}
+  .section-head p{margin-top:18px;color:var(--ink-dim);max-width:520px;font-size:16px;}
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease), transform .8s var(--ease);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* ---------- bento (what we build) ---------- */
+  .bento{
+    margin-top:70px;display:grid;grid-template-columns:repeat(6,1fr);gap:1px;
+    background:var(--line-soft);border:1px solid var(--line-soft);border-radius:var(--radius);overflow:hidden;
+  }
+  .cell{
+    background:var(--bg);padding:34px 30px;position:relative;overflow:hidden;
+    transition:background .3s var(--ease);
+  }
+  .cell:hover{background:var(--bg-2);}
+  .cell.c1{grid-column:span 4;min-height:260px;}
+  .cell.c2{grid-column:span 2;min-height:260px;}
+  .cell.c3{grid-column:span 2;min-height:220px;}
+  .cell.c4{grid-column:span 2;min-height:220px;}
+  .cell.c5{grid-column:span 2;min-height:220px;}
+  @media (max-width:860px){
+    .bento{grid-template-columns:1fr;}
+    .cell.c1,.cell.c2,.cell.c3,.cell.c4,.cell.c5{grid-column:span 1;min-height:auto;}
+  }
+  .cell .idx{font-size:12px;color:var(--ink-dimmer);letter-spacing:.05em;}
+  .cell h3{font-size:21px;font-weight:600;letter-spacing:-.01em;margin-top:14px;}
+  .cell p{margin-top:10px;font-size:14.5px;color:var(--ink-dim);max-width:380px;}
+  .cell .glyph{position:absolute;right:-10px;bottom:-16px;opacity:.06;width:140px;height:140px;color:#fff;}
+
+  /* animated line-graph decoration in the big cell */
+  .pulse-line{margin-top:26px;width:100%;max-width:340px;height:44px;}
+  .pulse-line path{stroke:#fff;stroke-width:1.4;fill:none;opacity:.6;}
+  .pulse-line .dash{stroke-dasharray:6 420;stroke-dashoffset:0;animation:dash 3.2s linear infinite;opacity:1;}
+  @keyframes dash{ from{stroke-dashoffset:0;} to{stroke-dashoffset:-426;} }
+
+  /* ---------- process ---------- */
+  .steps{margin-top:70px;display:flex;flex-direction:column;}
+  .step{
+    display:grid;grid-template-columns:90px 1fr 1fr;gap:32px;
+    padding:38px 0;border-top:1px solid var(--line-soft);
+    align-items:start;
+  }
+  .step:last-child{border-bottom:1px solid var(--line-soft);}
+  .step .num{font-size:14px;color:var(--ink-dimmer);font-variant-numeric:tabular-nums;padding-top:4px;}
+  .step h4{font-size:22px;font-weight:600;letter-spacing:-.01em;}
+  .step p{color:var(--ink-dim);font-size:14.5px;margin-top:10px;max-width:420px;}
+  @media (max-width:760px){ .step{grid-template-columns:40px 1fr;} .step > p, .step > div:nth-child(3){grid-column:2;} }
+
+  /* ---------- compare ---------- */
+  .compare{margin-top:70px;display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line-soft);border-radius:var(--radius);overflow:hidden;}
+  .compare > div{padding:40px 36px;}
+  .compare .old{background:var(--bg);border-right:1px solid var(--line-soft);}
+  .compare .new{background:var(--bg-2);}
+  .compare h5{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dimmer);margin-bottom:22px;}
+  .compare .new h5{color:#fff;}
+  .compare ul{list-style:none;}
+  .compare li{display:flex;gap:10px;padding:11px 0;font-size:14.5px;color:var(--ink-dim);border-top:1px solid var(--line-soft);}
+  .compare li:first-child{border-top:none;}
+  .compare .new li{color:var(--ink);}
+  .compare li .m{color:var(--ink-dimmer);flex:none;}
+  .compare .new li .m{color:#fff;}
+  @media (max-width:760px){ .compare{grid-template-columns:1fr;} .compare .old{border-right:none;border-bottom:1px solid var(--line-soft);} }
+
+  /* ---------- final CTA ---------- */
+  .final{
+    padding:170px 0;text-align:center;border-bottom:none;
+    position:relative;
+  }
+  .final .mark{width:46px;height:46px;color:#fff;margin:0 auto 30px;opacity:.9;}
+  .final h2{margin:0 auto;max-width:760px;text-align:center;}
+  .final p{margin:20px auto 0;color:var(--ink-dim);max-width:480px;text-align:center;}
+  .final .btn-primary{margin-top:40px;padding:18px 34px;font-size:15.5px;}
+  .final-frame{display:flex;justify-content:center;}
+
+  /* ---------- footer ---------- */
+  footer{padding:44px 0;}
+  .foot-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;}
+  .foot-brand{display:flex;align-items:center;gap:9px;color:var(--ink-dimmer);font-size:13px;}
+  .foot-brand svg{width:16px;height:16px;color:var(--ink-dimmer);}
+  .foot-links{display:flex;gap:26px;}
+  .foot-links a{font-size:13px;color:var(--ink-dimmer);transition:color .2s;}
+  .foot-links a:hover{color:#fff;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="grain"></div>
+<div class="vignette"></div>
+
+<nav id="nav">
+  <a href="#top" class="brand">
+    <svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd"><path d="M5.938 12.835c.127-.039.285.02.373.143.028.038.036.092.046.14.003.014-.02.033-.04.05-.124-.098-.24-.194-.354-.291-.011-.01-.016-.027-.025-.042zM8.396 9.412c.195-.032.39-.06.588-.05a.54.54 0 01.148.026c.202.071.402.147.601.224.028.01.05.036.075.055l-.013.027a9.203 9.203 0 01-.26-.089c-.115-.038-.213-.077-.315-.098-.25-.05-.25-.046-.292-.014l.574.144c.275.139.55.276.823.417.042.022.09.057.107.098.026.06.063.076.117.072.066-.006.132-.017.213-.027l-.04.086c.051.08.142.02.216.064-.074.13-.247.09-.334.199l.061.074-.12.087c0 .106-.038.168-.306.243l.026.085-.196.042.07.124h-.25l-.007.137c-.081-.01-.161-.018-.244-.027l-.053.123c-.027-.008-.052-.011-.073-.023-.067-.038-.128-.056-.195.006-.019.017-.063.014-.093.008-.026-.006-.05-.029-.07-.042-.11.095-.11.095-.208.003-.057.046-.12.074-.186.011-.063.027-.123-.02-.178-.014-.07.007-.097-.035-.133-.07l-.13.033c-.013-.236-.194-.19-.34-.203.005-.072.05-.092.095-.094a.474.474 0 01.159.022c.164.05.32.12.496.138.203.021.405.029.601-.015.265-.059.52-.149.707-.365.049-.056.083-.127.117-.195.019-.038.02-.084-.02-.116a1.397 1.397 0 00-.382-.217c.024.12-.031.182-.115.221 0 .014-.004.025 0 .03.08.115.084.16-.007.267a1.39 1.39 0 01-.218.211.477.477 0 01-.641-.05 1.36 1.36 0 01-.133-.152c-.078-.107-.076-.108-.033-.236-.165-.08-.128-.226-.104-.364.008-.05.028-.096.049-.163-.04.014-.067.017-.087.032a.897.897 0 00-.316.357c-.007.016-.01.034-.02.047-.012.015-.034.038-.045.035-.02-.006-.037-.027-.05-.045-.008-.012-.007-.032-.012-.057h-.126l.053-.172a14.82 14.82 0 00-.039-.049l.11-.284c-.06.026-.091.044-.124.051-.03.007-.064 0-.095 0 0-.031-.01-.07.004-.092.149-.22.305-.428.593-.476z"></path><path d="M8.06 10.788c-.003-.038-.004-.075.037-.062.016.006.034.048.028.067-.01.04-.038.032-.064-.005z"></path><path clip-rule="evenodd" d="M11.981.009c.226-.012.453-.011.679 0 .247.01.495.024.74.062.401.064.798.157 1.19.273.463.138.92.299 1.356.511a7.31 7.31 0 012.948 2.642c.292.469.536.963.739 1.479.219.556.446 1.11.623 1.683.204.654.329 1.326.458 1.997.097.504.182 1.01.29 1.511.156.722.329 1.44.494 2.16.186.812.4 1.615.63 2.415.102.355.193.713.282 1.072.11.436.202.876.254 1.323.031.278.066.557.073.837a7.56 7.56 0 01-.017.88c-.037.413-.1.818-.226 1.212a5.017 5.017 0 01-.915 1.649l-.13.156.018.023c.043-.023.088-.041.127-.068.2-.138.373-.307.531-.49.4-.46.721-.973.975-1.529a3.59 3.59 0 00.325-1.72c-.024-.424-.097-.834-.3-1.213-.013-.027-.015-.06-.03-.121.05.035.082.048.101.072.107.13.22.258.315.398.33.494.46 1.052.486 1.64a3.75 3.75 0 01-.47 1.97c-.36.655-.887 1.14-1.526 1.506-.193.111-.394.21-.595.308-.157.078-.248.211-.318.365a.522.522 0 00-.033.406.359.359 0 01.013.139c-.005.077-.077.155-.14.162-.054.006-.125-.043-.15-.116a1.206 1.206 0 01-.06-.233c-.04-.314-.155-.6-.308-.87a3.906 3.906 0 00-.73-.91 2.129 2.129 0 00-.897-.524 4.093 4.093 0 00-.692-.131c-.075-.008-.15-.04-.22.01.18.06.363.11.538.18.434.173.82.43 1.18.728.308.255.58.543.794.884.098.155.186.315.227.496.027.123.042.25.067.375.013.062-.002.109-.053.144-.047.033-.122.034-.163-.01a.455.455 0 01-.08-.14c-.03-.073-.038-.159-.078-.225a7.314 7.314 0 00-1.423-1.664c-.16-.137-.329-.26-.537-.323-.376-.114-.753-.203-1.15-.154-.213.025-.427.032-.64.053a1.6 1.6 0 00-.736.278 5.14 5.14 0 00-.834.72c-.329.342-.642.699-.955 1.055-.136.155-.264.319-.314.531a5.227 5.227 0 00-.012.051.096.096 0 01-.09.076h-.31c-.046 0-.082-.048-.072-.094.023-.108.045-.216.07-.324.075-.325.19-.635.368-.917.024-.039.04-.088.104-.08l.01.049.027.077c.28-.435.571-.834.996-1.135.283-.204.584-.378.89-.55a.196.196 0 00-.098-.002c-.162.043-.325.084-.485.134-.402.124-.764.33-1.11.566-.147.1-.298.193-.414.333a7.314 7.314 0 00-1.07 1.767.845.845 0 00-.04.12.075.075 0 01-.072.056h-.494c-.04 0-.062-.051-.036-.082.123-.14.246-.282.377-.415.275-.281.58-.532.777-.884.027-.048.063-.09.095-.135.238-.333.54-.607.818-.902.082-.086.175-.16.26-.24.029-.027.053-.057.079-.085l-.018-.025-.135.041c-.034.017-.07.031-.102.05-.248.144-.494.292-.743.433-.408.23-.825.439-1.209.711-.281.2-.591.358-.889.533-.02.012-.044.015-.08.028-.015-.135.143-.201.108-.336-.033.014-.064.02-.085.038-.111.096-.227.19-.328.296-.148.157-.284.325-.425.488-.125.143-.25.286-.373.431A.153.153 0 019.89 24H8.762a.316.316 0 00.016-.042c.028-.09.085-.172.083-.28-.091-.018-.162.001-.212.077a4.45 4.45 0 00-.136.215c-.01.016-.024.03-.042.03h-.093c-.019 0-.029-.022-.017-.037.071-.088.14-.178.209-.268.001-.002-.006-.012-.012-.024-.014.004-.03.006-.045.013-.176.09-.352.181-.527.274a.363.363 0 01-.168.042H5.202c-.026 0-.039-.036-.019-.053.21-.178.402-.374.558-.605.335-.496.538-1.047.667-1.629.004-.02-.003-.043-.006-.091-.037.048-.059.072-.076.1a1.943 1.943 0 01-.334.415c-.28.258-.59.448-.983.464-.297.012-.588 0-.865-.127-.46-.21-.722-.57-.794-1.072-.025-.17-.017-.171-.182-.219A3.513 3.513 0 011.97 20.6a2.286 2.286 0 01-.808-1.13 3.569 3.569 0 01-.16-1.245c.002-.034.016-.067.024-.1.032.023.046.043.05.066.033.153.059.308.096.46.086.355.257.664.516.92.258.256.571.419.91.532.358.118.717.138 1.07-.016a1.89 1.89 0 00.621-.452c.328-.348.533-.76.648-1.223.009-.034.005-.071.007-.11-.015.006-.026.006-.03.011-.031.05-.064.1-.093.152-.284.502-.679.887-1.196 1.135-.351.17-.718.255-1.11.159a1.607 1.607 0 01-.971-.64 2.006 2.006 0 01-.368-.924 2.903 2.903 0 01.02-.886c.05-.439.466-1.17.742-1.271-.02.063-.035.112-.053.16-.043.116-.097.227-.13.345a1.901 1.901 0 00-.05.82c.033.212.09.416.204.6.147.236.346.407.62.465.11.023.225.014.338.018a.576.576 0 00.386-.131c.164-.128.282-.292.366-.481.168-.375.24-.777.309-1.179.05-.296.093-.594.133-.893.039-.281.071-.563.104-.845.026-.232.048-.464.074-.696.024-.228.052-.455.076-.683.024-.227.047-.455.069-.683.013-.14.022-.28.034-.42l.037-.417c.022-.25.041-.5.065-.748.008-.082-.02-.132-.09-.177a2.46 2.46 0 01-.492-.418c-.1-.109-.188-.228-.282-.342-.035-.042-.056-.097-.116-.118a2.084 2.084 0 00.275.597c.06.092.131.176.196.265.063.086.182.115.234.226-.028.003-.046.01-.06.006a4.74 4.74 0 01-.22-.057 2.71 2.71 0 01-1.287-.819c-.435-.487-.656-1.076-.71-1.723a5.206 5.206 0 01.014-1.06c.072-.602.22-1.186.45-1.745.155-.376.338-.741.526-1.102.205-.393.466-.75.765-1.076.512-.559 1.104-1.024 1.726-1.448.717-.49 1.478-.898 2.277-1.233C8.244.828 8.767.632 9.31.494c.655-.166 1.31-.33 1.982-.415.229-.03.458-.058.688-.07z"></path></svg>
+    <span>Hermes Agents<span class="tag">· by Birûsk</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="#build">What we build</a>
+    <a href="#process">How it works</a>
+    <a href="#compare">Why AI employees</a>
+    <a class="nav-cta" href="#book">Book a call</a>
+  </div>
+</nav>
+
+<main id="top">
+
+  <section class="hero wrap">
+    <div class="eyebrow"><span class="dot"></span> Now onboarding — limited seats this quarter</div>
+    <h1>Your content &amp; lead‑gen team,<br><em>running while you sleep.</em></h1>
+    <p class="lede">We build autonomous Hermes agents that operate as full‑time AI employees — producing your content, running your funnel, and watching your competitors, 24 hours a day, 7 days a week.</p>
+    <div class="hero-cta">
+      <a class="btn-primary" href="#book">Book a call <span>→</span></a>
+      <a class="btn-ghost" href="#build">See what they build ↓</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><b>24/7</b><span>Always on, never off shift</span></div>
+      <div class="stat"><b>0</b><span>Extra headcount required</span></div>
+      <div class="stat"><b>5+</b><span>Content formats produced daily</span></div>
+      <div class="stat"><b>1</b><span>Agent replacing a small team</span></div>
+    </div>
+  </section>
+
+  <div class="marquee-wrap">
+    <div class="marquee">
+      <span>
+        <span>INSTAGRAM CAROUSELS</span>
+        <span>REELS</span>
+        <span>YOUTUBE VIDEOS</span>
+        <span>SHORT CLIPS</span>
+        <span>AD CREATIVE</span>
+        <span>COMPETITOR INTEL</span>
+        <span>INSTAGRAM CAROUSELS</span>
+        <span>REELS</span>
+        <span>YOUTUBE VIDEOS</span>
+        <span>SHORT CLIPS</span>
+        <span>AD CREATIVE</span>
+        <span>COMPETITOR INTEL</span>
+      </span>
+    </div>
+  </div>
+
+  <section id="build" class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">What the agent does</div>
+      <h2>One AI employee. Every content channel.</h2>
+      <p>Set the strategy once. The agent researches, drafts, designs, and ships — across every format your funnel needs.</p>
+    </div>
+
+    <div class="bento reveal">
+      <div class="cell c1">
+        <div class="idx">01 — Content engine</div>
+        <h3>Carousels, Reels &amp; YouTube, shipped daily</h3>
+        <p>Scripted, designed, and captioned Instagram carousels and Reels, plus full YouTube videos and short clips — cut from your raw ideas or existing footage, on a fixed daily cadence.</p>
+        <svg class="pulse-line" viewBox="0 0 340 44" preserveAspectRatio="none">
+          <path d="M0,32 L30,32 L42,10 L54,38 L66,18 L78,32 L110,32 L130,26 L150,32 L200,32 L215,14 L230,32 L280,32 L295,22 L310,32 L340,32" class="dash"/>
+        </svg>
+      </div>
+      <div class="cell c2">
+        <div class="idx">02 — Paid creative</div>
+        <h3>Ad variants, on tap</h3>
+        <p>Static and video ad creative generated and rotated to keep fatigue down and CTR up.</p>
+      </div>
+      <div class="cell c3">
+        <div class="idx">03 — Competitor intel</div>
+        <h3>Firecrawl‑powered scouting</h3>
+        <p>Continuously scrapes competitor sites, offers and ad libraries with Firecrawl, and surfaces what's actually working.</p>
+      </div>
+      <div class="cell c4">
+        <div class="idx">04 — Lead gen</div>
+        <h3>Funnel that never sleeps</h3>
+        <p>Captures, qualifies and follows up with leads the moment they show interest — no timezone gaps.</p>
+      </div>
+      <div class="cell c5">
+        <div class="idx">05 — Reporting</div>
+        <h3>You see everything</h3>
+        <p>A standing report of what shipped, what performed, and what's queued next.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="process" class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">How it works</div>
+      <h2>From brief to published, without a production team.</h2>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="num">01</div>
+        <div><h4>Brief the agent</h4></div>
+        <p>One working session to hand over your brand, offer, voice and goals. The agent absorbs it as standing memory.</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <div><h4>It builds, every day</h4></div>
+        <p>Content, ads and outreach get produced on schedule — drawing on live competitor and market signal, not guesswork.</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <div><h4>You approve or let it run</h4></div>
+        <p>Review everything before it goes out, or hand off full autonomy once you trust the output.</p>
+      </div>
+      <div class="step">
+        <div class="num">04</div>
+        <div><h4>It compounds</h4></div>
+        <p>Every result feeds back in — the agent keeps what works and drops what doesn't, week over week.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="compare" class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Why an AI employee</div>
+      <h2>Replaces the overhead of hiring a content team.</h2>
+    </div>
+    <div class="compare reveal">
+      <div class="old">
+        <h5>Hiring a team</h5>
+        <ul>
+          <li><span class="m">—</span> Weeks to hire, onboard, and train</li>
+          <li><span class="m">—</span> Output stops on weekends and holidays</li>
+          <li><span class="m">—</span> Salaries, tools and management overhead</li>
+          <li><span class="m">—</span> Competitor research done manually, rarely</li>
+          <li><span class="m">—</span> Quality varies with who's on shift</li>
+        </ul>
+      </div>
+      <div class="new">
+        <h5>Hermes AI employee</h5>
+        <ul>
+          <li><span class="m">✓</span> Live within days of the first brief</li>
+          <li><span class="m">✓</span> Produces around the clock, every day</li>
+          <li><span class="m">✓</span> One flat cost, no headcount</li>
+          <li><span class="m">✓</span> Competitor intel refreshed continuously</li>
+          <li><span class="m">✓</span> Consistent output, same standard every time</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="book" class="final wrap" style="border-bottom:none;">
+    <svg class="mark" viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd"><path d="M5.938 12.835c.127-.039.285.02.373.143.028.038.036.092.046.14.003.014-.02.033-.04.05-.124-.098-.24-.194-.354-.291-.011-.01-.016-.027-.025-.042zM8.396 9.412c.195-.032.39-.06.588-.05a.54.54 0 01.148.026c.202.071.402.147.601.224.028.01.05.036.075.055l-.013.027a9.203 9.203 0 01-.26-.089c-.115-.038-.213-.077-.315-.098-.25-.05-.25-.046-.292-.014l.574.144c.275.139.55.276.823.417.042.022.09.057.107.098.026.06.063.076.117.072.066-.006.132-.017.213-.027l-.04.086c.051.08.142.02.216.064-.074.13-.247.09-.334.199l.061.074-.12.087c0 .106-.038.168-.306.243l.026.085-.196.042.07.124h-.25l-.007.137c-.081-.01-.161-.018-.244-.027l-.053.123c-.027-.008-.052-.011-.073-.023-.067-.038-.128-.056-.195.006-.019.017-.063.014-.093.008-.026-.006-.05-.029-.07-.042-.11.095-.11.095-.208.003-.057.046-.12.074-.186.011-.063.027-.123-.02-.178-.014-.07.007-.097-.035-.133-.07l-.13.033c-.013-.236-.194-.19-.34-.203.005-.072.05-.092.095-.094a.474.474 0 01.159.022c.164.05.32.12.496.138.203.021.405.029.601-.015.265-.059.52-.149.707-.365.049-.056.083-.127.117-.195.019-.038.02-.084-.02-.116a1.397 1.397 0 00-.382-.217c.024.12-.031.182-.115.221 0 .014-.004.025 0 .03.08.115.084.16-.007.267a1.39 1.39 0 01-.218.211.477.477 0 01-.641-.05 1.36 1.36 0 01-.133-.152c-.078-.107-.076-.108-.033-.236-.165-.08-.128-.226-.104-.364.008-.05.028-.096.049-.163-.04.014-.067.017-.087.032a.897.897 0 00-.316.357c-.007.016-.01.034-.02.047-.012.015-.034.038-.045.035-.02-.006-.037-.027-.05-.045-.008-.012-.007-.032-.012-.057h-.126l.053-.172a14.82 14.82 0 00-.039-.049l.11-.284c-.06.026-.091.044-.124.051-.03.007-.064 0-.095 0 0-.031-.01-.07.004-.092.149-.22.305-.428.593-.476z"></path><path d="M8.06 10.788c-.003-.038-.004-.075.037-.062.016.006.034.048.028.067-.01.04-.038.032-.064-.005z"></path><path clip-rule="evenodd" d="M11.981.009c.226-.012.453-.011.679 0 .247.01.495.024.74.062.401.064.798.157 1.19.273.463.138.92.299 1.356.511a7.31 7.31 0 012.948 2.642c.292.469.536.963.739 1.479.219.556.446 1.11.623 1.683.204.654.329 1.326.458 1.997.097.504.182 1.01.29 1.511.156.722.329 1.44.494 2.16.186.812.4 1.615.63 2.415.102.355.193.713.282 1.072.11.436.202.876.254 1.323.031.278.066.557.073.837a7.56 7.56 0 01-.017.88c-.037.413-.1.818-.226 1.212a5.017 5.017 0 01-.915 1.649l-.13.156.018.023c.043-.023.088-.041.127-.068.2-.138.373-.307.531-.49.4-.46.721-.973.975-1.529a3.59 3.59 0 00.325-1.72c-.024-.424-.097-.834-.3-1.213-.013-.027-.015-.06-.03-.121.05.035.082.048.101.072.107.13.22.258.315.398.33.494.46 1.052.486 1.64a3.75 3.75 0 01-.47 1.97c-.36.655-.887 1.14-1.526 1.506-.193.111-.394.21-.595.308-.157.078-.248.211-.318.365a.522.522 0 00-.033.406.359.359 0 01.013.139c-.005.077-.077.155-.14.162-.054.006-.125-.043-.15-.116a1.206 1.206 0 01-.06-.233c-.04-.314-.155-.6-.308-.87a3.906 3.906 0 00-.73-.91 2.129 2.129 0 00-.897-.524 4.093 4.093 0 00-.692-.131c-.075-.008-.15-.04-.22.01.18.06.363.11.538.18.434.173.82.43 1.18.728.308.255.58.543.794.884.098.155.186.315.227.496.027.123.042.25.067.375.013.062-.002.109-.053.144-.047.033-.122.034-.163-.01a.455.455 0 01-.08-.14c-.03-.073-.038-.159-.078-.225a7.314 7.314 0 00-1.423-1.664c-.16-.137-.329-.26-.537-.323-.376-.114-.753-.203-1.15-.154-.213.025-.427.032-.64.053a1.6 1.6 0 00-.736.278 5.14 5.14 0 00-.834.72c-.329.342-.642.699-.955 1.055-.136.155-.264.319-.314.531a5.227 5.227 0 00-.012.051.096.096 0 01-.09.076h-.31c-.046 0-.082-.048-.072-.094.023-.108.045-.216.07-.324.075-.325.19-.635.368-.917.024-.039.04-.088.104-.08l.01.049.027.077c.28-.435.571-.834.996-1.135.283-.204.584-.378.89-.55a.196.196 0 00-.098-.002c-.162.043-.325.084-.485.134-.402.124-.764.33-1.11.566-.147.1-.298.193-.414.333a7.314 7.314 0 00-1.07 1.767.845.845 0 00-.04.12.075.075 0 01-.072.056h-.494c-.04 0-.062-.051-.036-.082.123-.14.246-.282.377-.415.275-.281.58-.532.777-.884.027-.048.063-.09.095-.135.238-.333.54-.607.818-.902.082-.086.175-.16.26-.24.029-.027.053-.057.079-.085l-.018-.025-.135.041c-.034.017-.07.031-.102.05-.248.144-.494.292-.743.433-.408.23-.825.439-1.209.711-.281.2-.591.358-.889.533-.02.012-.044.015-.08.028-.015-.135.143-.201.108-.336-.033.014-.064.02-.085.038-.111.096-.227.19-.328.296-.148.157-.284.325-.425.488-.125.143-.25.286-.373.431A.153.153 0 019.89 24H8.762a.316.316 0 00.016-.042c.028-.09.085-.172.083-.28-.091-.018-.162.001-.212.077a4.45 4.45 0 00-.136.215c-.01.016-.024.03-.042.03h-.093c-.019 0-.029-.022-.017-.037.071-.088.14-.178.209-.268.001-.002-.006-.012-.012-.024-.014.004-.03.006-.045.013-.176.09-.352.181-.527.274a.363.363 0 01-.168.042H5.202c-.026 0-.039-.036-.019-.053.21-.178.402-.374.558-.605.335-.496.538-1.047.667-1.629.004-.02-.003-.043-.006-.091-.037.048-.059.072-.076.1a1.943 1.943 0 01-.334.415c-.28.258-.59.448-.983.464-.297.012-.588 0-.865-.127-.46-.21-.722-.57-.794-1.072-.025-.17-.017-.171-.182-.219A3.513 3.513 0 011.97 20.6a2.286 2.286 0 01-.808-1.13 3.569 3.569 0 01-.16-1.245c.002-.034.016-.067.024-.1.032.023.046.043.05.066.033.153.059.308.096.46.086.355.257.664.516.92.258.256.571.419.91.532.358.118.717.138 1.07-.016a1.89 1.89 0 00.621-.452c.328-.348.533-.76.648-1.223.009-.034.005-.071.007-.11-.015.006-.026.006-.03.011-.031.05-.064.1-.093.152-.284.502-.679.887-1.196 1.135-.351.17-.718.255-1.11.159a1.607 1.607 0 01-.971-.64 2.006 2.006 0 01-.368-.924 2.903 2.903 0 01.02-.886c.05-.439.466-1.17.742-1.271-.02.063-.035.112-.053.16-.043.116-.097.227-.13.345a1.901 1.901 0 00-.05.82c.033.212.09.416.204.6.147.236.346.407.62.465.11.023.225.014.338.018a.576.576 0 00.386-.131c.164-.128.282-.292.366-.481.168-.375.24-.777.309-1.179.05-.296.093-.594.133-.893.039-.281.071-.563.104-.845.026-.232.048-.464.074-.696.024-.228.052-.455.076-.683.024-.227.047-.455.069-.683.013-.14.022-.28.034-.42l.037-.417c.022-.25.041-.5.065-.748.008-.082-.02-.132-.09-.177a2.46 2.46 0 01-.492-.418c-.1-.109-.188-.228-.282-.342-.035-.042-.056-.097-.116-.118a2.084 2.084 0 00.275.597c.06.092.131.176.196.265.063.086.182.115.234.226-.028.003-.046.01-.06.006a4.74 4.74 0 01-.22-.057 2.71 2.71 0 01-1.287-.819c-.435-.487-.656-1.076-.71-1.723a5.206 5.206 0 01.014-1.06c.072-.602.22-1.186.45-1.745.155-.376.338-.741.526-1.102.205-.393.466-.75.765-1.076.512-.559 1.104-1.024 1.726-1.448.717-.49 1.478-.898 2.277-1.233C8.244.828 8.767.632 9.31.494c.655-.166 1.31-.33 1.982-.415.229-.03.458-.058.688-.07z"></path></svg>
+    <div class="section-head" style="display:flex;flex-direction:column;align-items:center;">
+      <div class="kicker">Get started</div>
+      <h2>Let's build your AI employee.</h2>
+      <p>30 minutes. We look at your current content and lead flow, and show exactly what the agent would take off your plate.</p>
+    </div>
+    <div class="final-frame">
+      <a class="btn-primary" href="mailto:hello@birusk.ai?subject=Book%20a%20call%20-%20Hermes%20Agents">Book a call <span>→</span></a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <div class="foot-row">
+    <div class="foot-brand">
+      <svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd"><path d="M5.938 12.835c.127-.039.285.02.373.143.028.038.036.092.046.14.003.014-.02.033-.04.05-.124-.098-.24-.194-.354-.291-.011-.01-.016-.027-.025-.042zM8.396 9.412c.195-.032.39-.06.588-.05a.54.54 0 01.148.026c.202.071.402.147.601.224.028.01.05.036.075.055l-.013.027a9.203 9.203 0 01-.26-.089c-.115-.038-.213-.077-.315-.098-.25-.05-.25-.046-.292-.014l.574.144c.275.139.55.276.823.417.042.022.09.057.107.098.026.06.063.076.117.072.066-.006.132-.017.213-.027l-.04.086c.051.08.142.02.216.064-.074.13-.247.09-.334.199l.061.074-.12.087c0 .106-.038.168-.306.243l.026.085-.196.042.07.124h-.25l-.007.137c-.081-.01-.161-.018-.244-.027l-.053.123c-.027-.008-.052-.011-.073-.023-.067-.038-.128-.056-.195.006-.019.017-.063.014-.093.008-.026-.006-.05-.029-.07-.042-.11.095-.11.095-.208.003-.057.046-.12.074-.186.011-.063.027-.123-.02-.178-.014-.07.007-.097-.035-.133-.07l-.13.033c-.013-.236-.194-.19-.34-.203.005-.072.05-.092.095-.094a.474.474 0 01.159.022c.164.05.32.12.496.138.203.021.405.029.601-.015.265-.059.52-.149.707-.365.049-.056.083-.127.117-.195.019-.038.02-.084-.02-.116a1.397 1.397 0 00-.382-.217c.024.12-.031.182-.115.221 0 .014-.004.025 0 .03.08.115.084.16-.007.267a1.39 1.39 0 01-.218.211.477.477 0 01-.641-.05 1.36 1.36 0 01-.133-.152c-.078-.107-.076-.108-.033-.236-.165-.08-.128-.226-.104-.364.008-.05.028-.096.049-.163-.04.014-.067.017-.087.032a.897.897 0 00-.316.357c-.007.016-.01.034-.02.047-.012.015-.034.038-.045.035-.02-.006-.037-.027-.05-.045-.008-.012-.007-.032-.012-.057h-.126l.053-.172a14.82 14.82 0 00-.039-.049l.11-.284c-.06.026-.091.044-.124.051-.03.007-.064 0-.095 0 0-.031-.01-.07.004-.092.149-.22.305-.428.593-.476z"></path><path clip-rule="evenodd" d="M11.981.009c.226-.012.453-.011.679 0 .247.01.495.024.74.062.401.064.798.157 1.19.273.463.138.92.299 1.356.511a7.31 7.31 0 012.948 2.642c.292.469.536.963.739 1.479.219.556.446 1.11.623 1.683.204.654.329 1.326.458 1.997.097.504.182 1.01.29 1.511.156.722.329 1.44.494 2.16.186.812.4 1.615.63 2.415.102.355.193.713.282 1.072.11.436.202.876.254 1.323.031.278.066.557.073.837a7.56 7.56 0 01-.017.88c-.037.413-.1.818-.226 1.212a5.017 5.017 0 01-.915 1.649l-.13.156.018.023c.043-.023.088-.041.127-.068.2-.138.373-.307.531-.49.4-.46.721-.973.975-1.529a3.59 3.59 0 00.325-1.72c-.024-.424-.097-.834-.3-1.213-.013-.027-.015-.06-.03-.121.05.035.082.048.101.072.107.13.22.258.315.398.33.494.46 1.052.486 1.64a3.75 3.75 0 01-.47 1.97c-.36.655-.887 1.14-1.526 1.506-.193.111-.394.21-.595.308-.157.078-.248.211-.318.365a.522.522 0 00-.033.406.359.359 0 01.013.139c-.005.077-.077.155-.14.162-.054.006-.125-.043-.15-.116a1.206 1.206 0 01-.06-.233c-.04-.314-.155-.6-.308-.87a3.906 3.906 0 00-.73-.91 2.129 2.129 0 00-.897-.524 4.093 4.093 0 00-.692-.131c-.075-.008-.15-.04-.22.01.18.06.363.11.538.18.434.173.82.43 1.18.728.308.255.58.543.794.884.098.155.186.315.227.496.027.123.042.25.067.375.013.062-.002.109-.053.144-.047.033-.122.034-.163-.01a.455.455 0 01-.08-.14c-.03-.073-.038-.159-.078-.225a7.314 7.314 0 00-1.423-1.664c-.16-.137-.329-.26-.537-.323-.376-.114-.753-.203-1.15-.154-.213.025-.427.032-.64.053a1.6 1.6 0 00-.736.278 5.14 5.14 0 00-.834.72c-.329.342-.642.699-.955 1.055-.136.155-.264.319-.314.531a5.227 5.227 0 00-.012.051.096.096 0 01-.09.076h-.31c-.046 0-.082-.048-.072-.094.023-.108.045-.216.07-.324.075-.325.19-.635.368-.917.024-.039.04-.088.104-.08l.01.049.027.077c.28-.435.571-.834.996-1.135.283-.204.584-.378.89-.55a.196.196 0 00-.098-.002c-.162.043-.325.084-.485.134-.402.124-.764.33-1.11.566-.147.1-.298.193-.414.333a7.314 7.314 0 00-1.07 1.767.845.845 0 00-.04.12.075.075 0 01-.072.056h-.494c-.04 0-.062-.051-.036-.082.123-.14.246-.282.377-.415.275-.281.58-.532.777-.884.027-.048.063-.09.095-.135.238-.333.54-.607.818-.902.082-.086.175-.16.26-.24.029-.027.053-.057.079-.085l-.018-.025-.135.041c-.034.017-.07.031-.102.05-.248.144-.494.292-.743.433-.408.23-.825.439-1.209.711-.281.2-.591.358-.889.533-.02.012-.044.015-.08.028-.015-.135.143-.201.108-.336-.033.014-.064.02-.085.038-.111.096-.227.19-.328.296-.148.157-.284.325-.425.488-.125.143-.25.286-.373.431A.153.153 0 019.89 24H8.762a.316.316 0 00.016-.042c.028-.09.085-.172.083-.28-.091-.018-.162.001-.212.077a4.45 4.45 0 00-.136.215c-.01.016-.024.03-.042.03h-.093c-.019 0-.029-.022-.017-.037.071-.088.14-.178.209-.268.001-.002-.006-.012-.012-.024-.014.004-.03.006-.045.013-.176.09-.352.181-.527.274a.363.363 0 01-.168.042H5.202c-.026 0-.039-.036-.019-.053.21-.178.402-.374.558-.605.335-.496.538-1.047.667-1.629.004-.02-.003-.043-.006-.091-.037.048-.059.072-.076.1a1.943 1.943 0 01-.334.415c-.28.258-.59.448-.983.464-.297.012-.588 0-.865-.127-.46-.21-.722-.57-.794-1.072-.025-.17-.017-.171-.182-.219A3.513 3.513 0 011.97 20.6a2.286 2.286 0 01-.808-1.13 3.569 3.569 0 01-.16-1.245c.002-.034.016-.067.024-.1.032.023.046.043.05.066.033.153.059.308.096.46.086.355.257.664.516.92.258.256.571.419.91.532.358.118.717.138 1.07-.016a1.89 1.89 0 00.621-.452c.328-.348.533-.76.648-1.223.009-.034.005-.071.007-.11-.015.006-.026.006-.03.011-.031.05-.064.1-.093.152-.284.502-.679.887-1.196 1.135-.351.17-.718.255-1.11.159a1.607 1.607 0 01-.971-.64 2.006 2.006 0 01-.368-.924 2.903 2.903 0 01.02-.886c.05-.439.466-1.17.742-1.271-.02.063-.035.112-.053.16-.043.116-.097.227-.13.345a1.901 1.901 0 00-.05.82c.033.212.09.416.204.6.147.236.346.407.62.465.11.023.225.014.338.018a.576.576 0 00.386-.131c.164-.128.282-.292.366-.481.168-.375.24-.777.309-1.179.05-.296.093-.594.133-.893.039-.281.071-.563.104-.845.026-.232.048-.464.074-.696.024-.228.052-.455.076-.683.024-.227.047-.455.069-.683.013-.14.022-.28.034-.42l.037-.417c.022-.25.041-.5.065-.748.008-.082-.02-.132-.09-.177a2.46 2.46 0 01-.492-.418c-.1-.109-.188-.228-.282-.342-.035-.042-.056-.097-.116-.118a2.084 2.084 0 00.275.597c.06.092.131.176.196.265.063.086.182.115.234.226-.028.003-.046.01-.06.006a4.74 4.74 0 01-.22-.057 2.71 2.71 0 01-1.287-.819c-.435-.487-.656-1.076-.71-1.723a5.206 5.206 0 01.014-1.06c.072-.602.22-1.186.45-1.745.155-.376.338-.741.526-1.102.205-.393.466-.75.765-1.076.512-.559 1.104-1.024 1.726-1.448.717-.49 1.478-.898 2.277-1.233C8.244.828 8.767.632 9.31.494c.655-.166 1.31-.33 1.982-.415.229-.03.458-.058.688-.07z"></path></svg>
+      <span>Hermes Agents — an AI employee studio by Birûsk</span>
+    </div>
+    <div class="foot-links">
+      <a href="#build">What we build</a>
+      <a href="#process">How it works</a>
+      <a href="#book">Book a call</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // nav scroll state
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 24);
+  }, { passive:true });
+
+  // scroll reveal
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.reveal');
+  if (reduced) {
+    els.forEach(el => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    els.forEach(el => io.observe(el));
+  }
+
+  // animated background: drifting nodes + connecting lines
+  (function(){
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let w, h, dpr;
+    let nodes = [];
+    const COUNT = 46;
+
+    function resize(){
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = window.innerWidth; h = window.innerHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    function init(){
+      nodes = new Array(COUNT).fill(0).map(() => ({
+        x: Math.random()*w, y: Math.random()*h*1.4,
+        vx: (Math.random()-0.5)*0.12, vy: (Math.random()-0.5)*0.12,
+        r: Math.random()*1.4 + 0.6
+      }));
+    }
+    function step(){
+      ctx.clearRect(0,0,w,h);
+      for (const n of nodes){
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < -20) n.x = w+20; if (n.x > w+20) n.x = -20;
+        if (n.y < -20) n.y = h+20; if (n.y > h+20) n.y = -20;
+      }
+      for (let i=0;i<nodes.length;i++){
+        for (let j=i+1;j<nodes.length;j++){
+          const a = nodes[i], b = nodes[j];
+          const dx = a.x-b.x, dy = a.y-b.y;
+          const dist = Math.sqrt(dx*dx+dy*dy);
+          if (dist < 150){
+            ctx.strokeStyle = 'rgba(255,255,255,' + (0.09*(1-dist/150)) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+          }
+        }
+      }
+      for (const n of nodes){
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fill();
+      }
+      if (!reduced) requestAnimationFrame(step);
+    }
+    resize(); init();
+    window.addEventListener('resize', () => { resize(); init(); });
+    step();
+    if (reduced) { step(); } // draw one static frame only
+  })();
+</script>
+
+</body>
+</html>
